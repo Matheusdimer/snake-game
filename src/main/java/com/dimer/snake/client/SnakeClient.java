@@ -26,7 +26,7 @@ public class SnakeClient {
     public void start(ConfigWindow window, String ip) {
         try {
             SnakeClient.ip = ip;
-            startConnection(ip, Properties.SERVER_PORT);
+            startConnection(ip);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(window, "Erro ao conectar ao servidor:\n" + e.getMessage());
@@ -47,8 +47,8 @@ public class SnakeClient {
         stopConnection();
     }
 
-    public void startConnection(String ip, int port) throws IOException {
-        clientSocket = new Socket(ip, port);
+    public void startConnection(String ip) throws IOException {
+        clientSocket = new Socket(ip, Properties.SERVER_PORT, null, Properties.CLIENT_PORT);
         in = new ObjectInputStream(clientSocket.getInputStream());
         out = new DataOutputStream(clientSocket.getOutputStream());
     }

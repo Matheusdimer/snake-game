@@ -33,4 +33,8 @@ public class ConfigWindow extends JFrame {
             new Thread(() -> onStart.accept(this, ip)).start();
         });
     }
+
+    private void createUIComponents() {
+        startButton = new JButton("Start");
+    }
 }

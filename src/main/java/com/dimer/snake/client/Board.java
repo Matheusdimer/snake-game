@@ -3,6 +3,7 @@ package com.dimer.snake.client;
 import com.dimer.snake.common.GroundPackage;
 import com.dimer.snake.common.Movement;
 import com.dimer.snake.common.Properties;
+import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,15 +46,25 @@ public class Board extends JPanel {
     }
 
     private void loadImages() {
+        try {
+            ClassLoader classLoader = getClass().getClassLoader();
+            ImageIcon iid = new ImageIcon(
+                    IOUtils.toByteArray(classLoader.getResourceAsStream("dot.png"))
+            );
+            ball = iid.getImage();
 
-        ImageIcon iid = new ImageIcon("src/main/resources/dot.png");
-        ball = iid.getImage();
+            ImageIcon iia = new ImageIcon(
+                    IOUtils.toByteArray(classLoader.getResourceAsStream("apple.png"))
+            );
+            apple = iia.getImage();
 
-        ImageIcon iia = new ImageIcon("src/main/resources/apple.png");
-        apple = iia.getImage();
-
-        ImageIcon iih = new ImageIcon("src/main/resources/head.png");
-        head = iih.getImage();
+            ImageIcon iih = new ImageIcon(
+                    IOUtils.toByteArray(classLoader.getResourceAsStream("head.png"))
+            );
+            head = iih.getImage();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void render(GroundPackage groundPackage) {
