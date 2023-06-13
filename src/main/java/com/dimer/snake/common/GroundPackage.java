@@ -7,8 +7,11 @@ public class GroundPackage implements Serializable {
 
     private final Movement actualMovement;
 
-    public GroundPackage(int[][] ground, Movement actualMovement) {
+    private final boolean inGame;
+
+    public GroundPackage(int[][] ground, Movement actualMovement, boolean inGame) {
         this.actualMovement = actualMovement;
+        this.inGame = inGame;
         for (int i = 0; i < ground.length; i++) {
             System.arraycopy(ground[i], 0, this.ground[i], 0, ground[i].length);
         }
@@ -20,5 +23,9 @@ public class GroundPackage implements Serializable {
 
     public Movement getActualMovement() {
         return actualMovement;
+    }
+
+    public boolean isInGame() {
+        return inGame;
     }
 }

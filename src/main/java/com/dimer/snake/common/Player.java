@@ -17,6 +17,8 @@ public class Player {
 
     private final int number;
 
+    private boolean dead;
+
     public Player(String name, int number) {
         this.name = name;
         this.number = number;
@@ -78,17 +80,46 @@ public class Player {
     }
 
     public void renderToGround(int[][] ground) {
-        for (int[] ints : ground) {
-            Arrays.fill(ints, 0);
-        }
-
         for (int dotIndex = 0; dotIndex < dots; dotIndex++) {
             int xPos = x[dotIndex], yPos = y[dotIndex];
-            ground[xPos][yPos] = number;
+
+            if (dotIndex == dots - 1 && Math.abs(ground[xPos][yPos]) >= 10) {
+                this.kill();
+            }
+
+            ground[xPos][yPos] = dotIndex == dots - 1 ? -number : number;
         }
     }
 
     public Movement getMovement() {
         return movement;
+    }
+
+    public boolean checkApple(int xApple, int yApple) {
+        int xHead = x[dots - 1];
+        int yHead = y[dots - 1];
+
+        if (xHead == xApple && yHead == yApple) {
+            addSnakeLength();
+            return true;
+        }
+        return false;
+    }
+
+    private void addSnakeLength() {
+        dots++;
+
+        for (int dot = dots - 1; dot > 0; dot--) {
+            x[dot] = x[dot - 1];
+            y[dot] = y[dot - 1];
+        }
+    }
+
+    private void kill() {
+        dead = true;
+    }
+
+    public boolean isDead() {
+        return dead;
     }
 }

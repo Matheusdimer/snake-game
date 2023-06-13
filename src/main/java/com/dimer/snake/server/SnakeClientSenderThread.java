@@ -26,18 +26,20 @@ public class SnakeClientSenderThread extends Thread {
 
             while (clientSocket.isConnected()) {
                 Player player = gameController.getPlayer(playerName);
+                boolean inGame = player != null;
+
+                GroundPackage groundPackage = new GroundPackage(
+                        gameController.getGround(),
+                        inGame ? player.getMovement() : null,
+                        inGame
+                );
+
+                out.writeUnshared(groundPackage);
 
                 if (player == null) {
                     System.out.println("[SENDER] " + playerName + " desconectado.");
                     break;
                 }
-
-                GroundPackage groundPackage = new GroundPackage(
-                        gameController.getGround(),
-                        player.getMovement()
-                );
-
-                out.writeUnshared(groundPackage);
 
                 sleep(Properties.DELAY / 2);
             }

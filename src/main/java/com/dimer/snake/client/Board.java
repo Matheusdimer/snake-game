@@ -58,13 +58,18 @@ public class Board extends JPanel {
     public void render(GroundPackage groundPackage) {
         this.ground = groundPackage.getGround();
         this.actualMovement = groundPackage.getActualMovement();
+        this.inGame = groundPackage.isInGame();
         repaint();
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        doDrawing(g);
+        if (inGame) {
+            doDrawing(g);
+        } else {
+            gameOver(g);
+        }
     }
 
     private void doDrawing(Graphics g) {
@@ -74,8 +79,8 @@ public class Board extends JPanel {
 
                 if (dot == Properties.APPLE) {
                     g.drawImage(apple, x * DOT_SIZE, y * DOT_SIZE, this);
-                } else if (dot >= 10) {
-                    g.drawImage(ball, x * DOT_SIZE, y * DOT_SIZE, this);
+                } else if (Math.abs(dot) >= 10) {
+                    g.drawImage(dot < 0 ? head : ball, x * DOT_SIZE, y * DOT_SIZE, this);
                 }
             }
         }
@@ -84,7 +89,6 @@ public class Board extends JPanel {
     }
 
     private void gameOver(Graphics g) {
-
         String msg = "Game Over";
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = getFontMetrics(small);
