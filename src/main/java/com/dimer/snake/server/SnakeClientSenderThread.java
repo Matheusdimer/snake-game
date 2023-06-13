@@ -31,8 +31,8 @@ public class SnakeClientSenderThread extends Thread {
                 GroundPackage groundPackage = new GroundPackage(
                         gameController.getGround(),
                         inGame ? player.getMovement() : null,
-                        inGame
-                );
+                        inGame,
+                        inGame ? player.length() : 0);
 
                 out.writeUnshared(groundPackage);
 

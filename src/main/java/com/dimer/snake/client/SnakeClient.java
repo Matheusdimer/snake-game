@@ -3,41 +3,62 @@ package com.dimer.snake.client;
 import com.dimer.snake.common.GroundPackage;
 import com.dimer.snake.common.Properties;
 
+import javax.swing.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
 public class SnakeClient {
+    public static final SnakeClient INSTANCE = new SnakeClient();
+
+    public static String ip;
+
     private Socket clientSocket;
     private ObjectInputStream in;
     private DataOutputStream out;
+    private SnakeWindow gameWindow;
 
     public static void main(String[] args) {
-        SnakeClient client = new SnakeClient();
-        client.startConnection("localhost", Properties.SERVER_PORT);
+        new ConfigWindow(INSTANCE::start);
+    }
+
+    public void start(ConfigWindow window, String ip) {
+        try {
+            SnakeClient.ip = ip;
+            startConnection(ip, Properties.SERVER_PORT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(window, "Erro ao conectar ao servidor:\n" + e.getMessage());
+            window.dispose();
+            return;
+        }
+
+        if (window != null) {
+            window.dispose();
+        }
 
         try {
-            client.render();
+            render();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        client.stopConnection();
+        stopConnection();
     }
 
-    public void startConnection(String ip, int port) {
-        try {
-            clientSocket = new Socket(ip, port);
-            in = new ObjectInputStream(clientSocket.getInputStream());
-            out = new DataOutputStream(clientSocket.getOutputStream());
-        } catch (IOException exception) {
-            throw new RuntimeException("Failed to acquire connection with server", exception);
-        }
+    public void startConnection(String ip, int port) throws IOException {
+        clientSocket = new Socket(ip, port);
+        in = new ObjectInputStream(clientSocket.getInputStream());
+        out = new DataOutputStream(clientSocket.getOutputStream());
     }
 
     public void render() throws IOException, ClassNotFoundException {
-        SnakeWindow gameWindow = new SnakeWindow(out);
+        if (gameWindow == null) {
+            gameWindow = new SnakeWindow(out);
+        } else {
+            gameWindow.setOutput(out);
+        }
 
         while (clientSocket.isConnected()) {
             GroundPackage groundPackage = (GroundPackage) in.readUnshared();

@@ -25,8 +25,9 @@ public class Board extends JPanel {
     private Image apple;
     private Image head;
 
-    private final DataOutputStream out;
+    private DataOutputStream out;
     private Movement actualMovement;
+    private int score;
 
     public Board(DataOutputStream out) {
         this.out = out;
@@ -59,6 +60,10 @@ public class Board extends JPanel {
         this.ground = groundPackage.getGround();
         this.actualMovement = groundPackage.getActualMovement();
         this.inGame = groundPackage.isInGame();
+        if (inGame) {
+            this.score = groundPackage.getScore();
+        }
+
         repaint();
     }
 
@@ -73,6 +78,8 @@ public class Board extends JPanel {
     }
 
     private void doDrawing(Graphics g) {
+        drawScore(g);
+
         for (int y = 0; y < ground.length; y++) {
             for (int x = 0; x < ground[y].length; x++) {
                 int dot = ground[y][x];
@@ -91,13 +98,25 @@ public class Board extends JPanel {
     }
 
     private void gameOver(Graphics g) {
+        drawScore(g);
         String msg = "Game Over";
+        String restartMsg = "Press enter to restart game";
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(small);
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
+        g.drawString(restartMsg, (B_WIDTH - metr.stringWidth(restartMsg)) / 2, B_HEIGHT / 2 + 20);
+    }
+
+    private void drawScore(Graphics g) {
+        String msg = "Score: " + score;
+        Font small = new Font("Helvetica", Font.BOLD, 14);
+
+        g.setColor(Color.white);
+        g.setFont(small);
+        g.drawString(msg, 5, 20);
     }
 
     private class TAdapter extends KeyAdapter {
@@ -108,24 +127,37 @@ public class Board extends JPanel {
             int key = e.getKeyCode();
 
             try {
+                if (key == KeyEvent.VK_ENTER && !inGame) {
+                    new Thread(() -> SnakeClient.INSTANCE.start(null, SnakeClient.ip)).start();
+                    return;
+                }
+
                 if ((key == KeyEvent.VK_LEFT) && (actualMovement != Movement.RIGHT)) {
                     out.writeInt(Movement.LEFT.ordinal());
+                    return;
                 }
 
                 if ((key == KeyEvent.VK_RIGHT) && (actualMovement != Movement.LEFT)) {
                     out.writeInt(Movement.RIGHT.ordinal());
+                    return;
                 }
 
                 if ((key == KeyEvent.VK_UP) && (actualMovement != Movement.DOWN)) {
                     out.writeInt(Movement.UP.ordinal());
+                    return;
                 }
 
                 if ((key == KeyEvent.VK_DOWN) && (actualMovement != Movement.UP)) {
                     out.writeInt(Movement.DOWN.ordinal());
+                    return;
                 }
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
         }
+    }
+
+    public void setOut(DataOutputStream out) {
+        this.out = out;
     }
 }

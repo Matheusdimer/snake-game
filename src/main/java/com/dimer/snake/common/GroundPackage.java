@@ -9,9 +9,12 @@ public class GroundPackage implements Serializable {
 
     private final boolean inGame;
 
-    public GroundPackage(int[][] ground, Movement actualMovement, boolean inGame) {
+    private final int score;
+
+    public GroundPackage(int[][] ground, Movement actualMovement, boolean inGame, int score) {
         this.actualMovement = actualMovement;
         this.inGame = inGame;
+        this.score = score;
         for (int i = 0; i < ground.length; i++) {
             System.arraycopy(ground[i], 0, this.ground[i], 0, ground[i].length);
         }
@@ -27,5 +30,9 @@ public class GroundPackage implements Serializable {
 
     public boolean isInGame() {
         return inGame;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

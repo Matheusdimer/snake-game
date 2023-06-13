@@ -24,4 +24,8 @@ public class SnakeWindow extends JFrame {
     public void render(GroundPackage groundPackage) {
         board.render(groundPackage);
     }
+
+    public void setOutput(DataOutputStream out) {
+        board.setOut(out);
+    }
 }
