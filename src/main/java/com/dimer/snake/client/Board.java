@@ -79,6 +79,8 @@ public class Board extends JPanel {
 
                 if (dot == Properties.APPLE) {
                     g.drawImage(apple, x * DOT_SIZE, y * DOT_SIZE, this);
+                } else if (dot == Properties.DEAD_PLAYER) {
+                    g.drawImage(head, x * DOT_SIZE, y * DOT_SIZE, this);
                 } else if (Math.abs(dot) >= 10) {
                     g.drawImage(dot < 0 ? head : ball, x * DOT_SIZE, y * DOT_SIZE, this);
                 }

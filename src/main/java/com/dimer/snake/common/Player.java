@@ -21,13 +21,17 @@ public class Player {
 
     private int otherPlayerClashed;
 
-    public Player(String name, int number) {
+    public Player(String name, int number, int initialX, int initialY) {
+        if (initialX < 3) {
+            throw new IllegalArgumentException("Initial X must be greater then 3");
+        }
+
         this.name = name;
         this.number = number;
 
         for (int dotIndex = 0; dotIndex < dots; dotIndex++) {
-            x[dotIndex] = dotIndex;
-            y[dotIndex] = 0;
+            x[dotIndex] = initialX - dotIndex;
+            y[dotIndex] = initialY;
         }
     }
 
@@ -115,6 +119,16 @@ public class Player {
         return false;
     }
 
+    public void checkDeadPlayer(boolean[][] deadPlayers) {
+        int xHead = x[dots - 1];
+        int yHead = y[dots - 1];
+
+        if (deadPlayers[xHead][yHead]) {
+            addSnakeLength();
+            deadPlayers[xHead][yHead] = false;
+        }
+    }
+
     private void addSnakeLength() {
         dots++;
 
@@ -124,8 +138,10 @@ public class Player {
         }
     }
 
-    public void kill() {
+    public Player kill() {
+        System.out.println("[PLAYER] " + name + " morreu.");
         dead = true;
+        return this;
     }
 
     public boolean isDead() {
@@ -146,5 +162,14 @@ public class Player {
 
     public int getNumber() {
         return number;
+    }
+
+    public void moveToDeadPlayers(boolean[][] deadPlayersMap) {
+        for (int i = 0; i < dots; i++) {
+            int xDot = x[i];
+            int yDot = y[i];
+
+            deadPlayersMap[xDot][yDot] = true;
+        }
     }
 }

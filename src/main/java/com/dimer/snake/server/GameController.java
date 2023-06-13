@@ -15,6 +15,8 @@ public class GameController extends Thread {
 
     private final int[][] ground = new int[GAME_SIZE][GAME_SIZE];
 
+    private final boolean[][] deadPlayersMap = new boolean[GAME_SIZE][GAME_SIZE];
+
     private final Map<String, Player> players = new ConcurrentHashMap<>();
 
     private int lastPlayerNumber = 10;
@@ -50,6 +52,7 @@ public class GameController extends Thread {
 
                 if (player.isDead()) {
                     removePlayer(player.getName());
+                    player.moveToDeadPlayers(deadPlayersMap);
                     continue;
                 } else if (player.hasHeadClash()) {
                     Player playerCashed = findPlayerByNumber(player.getOtherPlayerClashed());
@@ -63,11 +66,15 @@ public class GameController extends Thread {
                     boolean ate = player.checkApple(xApple, yApple);
                     hasApple = !ate;
                 }
+
+                player.checkDeadPlayer(deadPlayersMap);
             }
 
             if (hasApple) {
                 ground[xApple][yApple] = Properties.APPLE;
             }
+
+            renderDeadPlayers();
 
             try {
                 sleep(Properties.DELAY);
@@ -77,26 +84,52 @@ public class GameController extends Thread {
         }
     }
 
+    private void renderDeadPlayers() {
+        for (int x = 0; x < deadPlayersMap.length; x++) {
+            for (int y = 0; y < deadPlayersMap[x].length; y++) {
+                if (deadPlayersMap[x][y]) {
+                    ground[x][y] = Properties.DEAD_PLAYER;
+                }
+            }
+        }
+    }
+
     private void decideWhoKill(Player player1, Player player2) {
+        Player killed;
+
         // Se os dois players tem o mesmo tamanho, é tirado a sorte para ver quem morre :)
         if (player1.length() == player2.length()) {
             if (Math.random() <= 0.5) {
-                player1.kill();
+                killed = player1.kill();
             } else {
-                player2.kill();
+                killed = player2.kill();
             }
         // Se não, morre quem for menor
         } else if (player1.length() > player2.length()) {
-            player2.kill();
+            killed = player2.kill();
         } else {
-            player1.kill();
+            killed = player1.kill();
         }
+
+        killed.moveToDeadPlayers(deadPlayersMap);
+        removePlayer(killed.getName());
     }
 
     public synchronized String newPlayer() {
         int number = lastPlayerNumber++;
+        int initialX, initialY;
         String name = "Player" + number;
-        players.put(name, new Player(name, number));
+
+        while (true) {
+            initialX = randomInt(3, GAME_SIZE - 1);
+            initialY = randomInt(0, GAME_SIZE - 1);
+
+            if (ground[initialX][initialY] == 0) {
+                break;
+            }
+        }
+
+        players.put(name, new Player(name, number, initialX, initialY));
         return name;
     }
 
@@ -124,5 +157,9 @@ public class GameController extends Thread {
         }
 
         return null;
+    }
+
+    private int randomInt(int min, int max) {
+        return (int) (Math.random() * max) + min;
     }
 }
