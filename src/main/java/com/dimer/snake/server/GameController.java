@@ -51,6 +51,12 @@ public class GameController extends Thread {
                 if (player.isDead()) {
                     removePlayer(player.getName());
                     continue;
+                } else if (player.hasHeadClash()) {
+                    Player playerCashed = findPlayerByNumber(player.getOtherPlayerClashed());
+                    if (playerCashed != null) {
+                        decideWhoKill(player, playerCashed);
+                    }
+                    continue;
                 }
 
                 if (hasApple) {
@@ -68,6 +74,22 @@ public class GameController extends Thread {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void decideWhoKill(Player player1, Player player2) {
+        // Se os dois players tem o mesmo tamanho, é tirado a sorte para ver quem morre :)
+        if (player1.length() == player2.length()) {
+            if (Math.random() <= 0.5) {
+                player1.kill();
+            } else {
+                player2.kill();
+            }
+        // Se não, morre quem for menor
+        } else if (player1.length() > player2.length()) {
+            player2.kill();
+        } else {
+            player1.kill();
         }
     }
 
@@ -92,5 +114,15 @@ public class GameController extends Thread {
 
     public synchronized void removePlayer(String playerName) {
         players.remove(playerName);
+    }
+
+    private Player findPlayerByNumber(int number) {
+        for (Player player : players.values()) {
+            if (player.getNumber() == number) {
+                return player;
+            }
+        }
+
+        return null;
     }
 }

@@ -34,7 +34,7 @@ public class SnakeClientReceiverThread extends Thread {
                 Movement movement = Movement.fromValue(command);
 
                 if (movement != null) {
-                    System.out.println("[RECEIVER] " + playerName + " se moveu: " + movement.toString());
+                    System.out.println("[RECEIVER] " + playerName + " se moveu: " + movement);
                     gameController.movePlayer(playerName, movement);
                 }
             }

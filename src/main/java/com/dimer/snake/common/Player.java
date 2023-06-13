@@ -1,7 +1,5 @@
 package com.dimer.snake.common;
 
-import java.util.Arrays;
-
 import static com.dimer.snake.common.Properties.GAME_SIZE;
 
 public class Player {
@@ -18,6 +16,10 @@ public class Player {
     private final int number;
 
     private boolean dead;
+
+    private boolean headClash;
+
+    private int otherPlayerClashed;
 
     public Player(String name, int number) {
         this.name = name;
@@ -83,8 +85,15 @@ public class Player {
         for (int dotIndex = 0; dotIndex < dots; dotIndex++) {
             int xPos = x[dotIndex], yPos = y[dotIndex];
 
-            if (dotIndex == dots - 1 && Math.abs(ground[xPos][yPos]) >= 10) {
-                this.kill();
+            if (dotIndex == dots - 1) {
+                // Indica que a cabeça do player se chocou com o corpo de outro player
+                if (ground[xPos][yPos] >= 10) {
+                    this.kill();
+                } else if (ground[xPos][yPos] <= -10) {
+                    // Indica que a cabeça do player se chocou com a cabeça de outro player
+                    this.headClash = true;
+                    this.otherPlayerClashed = Math.abs(ground[xPos][yPos]);
+                }
             }
 
             ground[xPos][yPos] = dotIndex == dots - 1 ? -number : number;
@@ -115,11 +124,27 @@ public class Player {
         }
     }
 
-    private void kill() {
+    public void kill() {
         dead = true;
     }
 
     public boolean isDead() {
         return dead;
+    }
+
+    public boolean hasHeadClash() {
+        return headClash;
+    }
+
+    public int getOtherPlayerClashed() {
+        return otherPlayerClashed;
+    }
+
+    public int length() {
+        return dots;
+    }
+
+    public int getNumber() {
+        return number;
     }
 }

@@ -38,6 +38,8 @@ public class SnakeClientSenderThread extends Thread {
 
                 if (player == null) {
                     System.out.println("[SENDER] " + playerName + " desconectado.");
+                    clientSocket.close();
+                    out.close();
                     break;
                 }
 
