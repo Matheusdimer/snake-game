@@ -50,8 +50,16 @@ public class SnakeClient {
     }
 
     public void startConnection(String ip) throws IOException {
+        int port = Properties.SERVER_PORT;
+
+        if (ip.contains(":")) {
+            String[] split = ip.split(":");
+            ip = split[0];
+            port = Integer.parseInt(split[1]);
+        }
+
         System.out.println("[CLIENT] Iniciando conexão com o servidor.");
-        clientSocket = new Socket(ip, Properties.SERVER_PORT, null, Properties.randomInt(15000, 25000));
+        clientSocket = new Socket(ip, port, null, Properties.randomInt(15000, 25000));
 
         try {
             in = new ObjectInputStream(clientSocket.getInputStream());
