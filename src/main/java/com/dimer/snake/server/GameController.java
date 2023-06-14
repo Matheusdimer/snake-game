@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dimer.snake.common.Properties.GAME_SIZE;
+import static com.dimer.snake.common.Properties.randomInt;
 
 public class GameController extends Thread {
     public static final GameController INSTANCE = new GameController();
@@ -157,9 +158,5 @@ public class GameController extends Thread {
         }
 
         return null;
-    }
-
-    private int randomInt(int min, int max) {
-        return (int) (Math.random() * max) + min;
     }
 }

@@ -8,4 +8,8 @@ public class Properties {
     public static final int APPLE = 1;
     public static final int DEAD_PLAYER = 2;
 
+    public static int randomInt(int min, int max) {
+        return (int) (Math.random() * max) + min;
+    }
+
 }

@@ -30,7 +30,9 @@ public class SnakeClient {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(window, "Erro ao conectar ao servidor:\n" + e.getMessage());
-            window.dispose();
+            if (window != null) {
+                window.dispose();
+            }
             return;
         }
 
@@ -48,9 +50,19 @@ public class SnakeClient {
     }
 
     public void startConnection(String ip) throws IOException {
-        clientSocket = new Socket(ip, Properties.SERVER_PORT, null, Properties.CLIENT_PORT);
-        in = new ObjectInputStream(clientSocket.getInputStream());
-        out = new DataOutputStream(clientSocket.getOutputStream());
+        System.out.println("[CLIENT] Iniciando conexão com o servidor.");
+        clientSocket = new Socket(ip, Properties.SERVER_PORT, null, Properties.randomInt(15000, 25000));
+
+        try {
+            in = new ObjectInputStream(clientSocket.getInputStream());
+            out = new DataOutputStream(clientSocket.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            clientSocket = new Socket(ip, Properties.SERVER_PORT, null, Properties.randomInt(15000, 25000));
+            in = new ObjectInputStream(clientSocket.getInputStream());
+            out = new DataOutputStream(clientSocket.getOutputStream());
+        }
     }
 
     public void render() throws IOException, ClassNotFoundException {
@@ -68,15 +80,13 @@ public class SnakeClient {
 
     public void stopConnection() {
         try {
-            in.close();
+            System.out.println("[CLIENT] Encerrando conexão com o servidor.");
             clientSocket.close();
+            in.close();
+            out.close();
         } catch (IOException exception) {
-            throw new RuntimeException("Failed to close connection with server", exception);
+            System.out.println("[CLIENT] Failed to close connection with server");
+            exception.printStackTrace();
         }
-    }
-
-    public void clearConsole() {
-        for(int i = 0; i < 80*300; i++) // Default Height of cmd is 300 and Default width is 80
-            System.out.print("\b");
     }
 }

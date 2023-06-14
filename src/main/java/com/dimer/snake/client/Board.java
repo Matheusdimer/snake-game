@@ -139,7 +139,9 @@ public class Board extends JPanel {
 
             try {
                 if (key == KeyEvent.VK_ENTER && !inGame) {
-                    new Thread(() -> SnakeClient.INSTANCE.start(null, SnakeClient.ip)).start();
+                    SnakeClient client = SnakeClient.INSTANCE;
+                    client.stopConnection();
+                    new Thread(() -> client.start(null, SnakeClient.ip)).start();
                     return;
                 }
 
