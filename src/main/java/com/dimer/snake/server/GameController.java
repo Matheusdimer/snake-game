@@ -122,7 +122,7 @@ public class GameController extends Thread {
         String name = "Player" + number;
 
         while (true) {
-            initialX = randomInt(3, GAME_SIZE - 1);
+            initialX = randomInt(4, GAME_SIZE - 1);
             initialY = randomInt(0, GAME_SIZE - 1);
 
             if (ground[initialX][initialY] == 0) {
