@@ -139,7 +139,13 @@ public class GameController extends Thread {
     }
 
     public synchronized void movePlayer(String name, Movement movement) {
-        getPlayer(name).setMovement(movement);
+        Player player = getPlayer(name);
+
+        if (player == null) {
+            return;
+        }
+
+        player.setMovement(movement);
     }
 
     public synchronized int[][] getGround() {
@@ -147,6 +153,10 @@ public class GameController extends Thread {
     }
 
     public synchronized void removePlayer(String playerName) {
+        if (playerName == null) {
+            return;
+        }
+
         players.remove(playerName);
     }
 
