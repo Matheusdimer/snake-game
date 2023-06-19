@@ -12,6 +12,8 @@ import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import static com.dimer.snake.common.Properties.*;
+
 public class Board extends JPanel {
 
     private final int B_WIDTH = 300;
@@ -22,13 +24,12 @@ public class Board extends JPanel {
     private int[][] ground = new int[Properties.GAME_SIZE][Properties.GAME_SIZE];
     private boolean inGame = true;
 
-    private Image ball;
     private Image apple;
-    private Image head;
 
     private DataOutputStream out;
     private Movement actualMovement;
     private int score;
+    private GroundPackage groundPackage;
 
     public Board(DataOutputStream out) {
         this.out = out;
@@ -47,27 +48,17 @@ public class Board extends JPanel {
 
     private void loadImages() {
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            ImageIcon iid = new ImageIcon(
-                    IOUtils.toByteArray(classLoader.getResourceAsStream("dot.png"))
-            );
-            ball = iid.getImage();
-
             ImageIcon iia = new ImageIcon(
-                    IOUtils.toByteArray(classLoader.getResourceAsStream("apple.png"))
+                    IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("apple.png"))
             );
             apple = iia.getImage();
-
-            ImageIcon iih = new ImageIcon(
-                    IOUtils.toByteArray(classLoader.getResourceAsStream("head.png"))
-            );
-            head = iih.getImage();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void render(GroundPackage groundPackage) {
+        this.groundPackage = groundPackage;
         this.ground = groundPackage.getGround();
         this.actualMovement = groundPackage.getActualMovement();
         this.inGame = groundPackage.isInGame();
@@ -95,12 +86,15 @@ public class Board extends JPanel {
             for (int x = 0; x < ground[y].length; x++) {
                 int dot = ground[y][x];
 
-                if (dot == Properties.APPLE) {
+                if (dot == APPLE) {
+                    g.setColor(null);
                     g.drawImage(apple, x * DOT_SIZE, y * DOT_SIZE, this);
-                } else if (dot == Properties.DEAD_PLAYER) {
-                    g.drawImage(head, x * DOT_SIZE, y * DOT_SIZE, this);
+                } else if (dot == DEAD_PLAYER) {
+                    g.setColor(DEAD_PLAYER_COLOR);
+                    g.fillOval(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
                 } else if (Math.abs(dot) >= 10) {
-                    g.drawImage(dot < 0 ? head : ball, x * DOT_SIZE, y * DOT_SIZE, this);
+                    g.setColor(dot < 0 ? HEAD_COLOR : groundPackage.getPlayerColor(dot));
+                    g.fillOval(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
                 }
             }
         }

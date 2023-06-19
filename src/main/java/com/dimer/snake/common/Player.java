@@ -2,7 +2,10 @@ package com.dimer.snake.common;
 
 import com.dimer.snake.server.GameController;
 
+import java.awt.*;
+
 import static com.dimer.snake.common.Properties.GAME_SIZE;
+import static com.dimer.snake.common.Properties.randomInt;
 
 public class Player {
     private final int[] x = new int[GAME_SIZE * GAME_SIZE];
@@ -10,6 +13,8 @@ public class Player {
     private final int[] y = new int[GAME_SIZE * GAME_SIZE];
 
     private final GameController controller = GameController.INSTANCE;
+
+    private final Color color = new Color(randomInt(0, 255), randomInt(0, 255), randomInt(0, 255));
 
     private int dots = 3;
 
@@ -183,6 +188,10 @@ public class Player {
 
     public int getNumber() {
         return number;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public void moveToDeadPlayers() {

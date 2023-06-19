@@ -4,9 +4,11 @@ import com.dimer.snake.common.Movement;
 import com.dimer.snake.common.Player;
 import com.dimer.snake.common.Properties;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static com.dimer.snake.common.Properties.GAME_SIZE;
 import static com.dimer.snake.common.Properties.randomInt;
@@ -160,5 +162,9 @@ public class GameController extends Thread {
 
     public boolean[][] getDeadPlayersMap() {
         return deadPlayersMap;
+    }
+
+    public Map<Integer, Color> getPlayersColors() {
+        return players.values().stream().collect(Collectors.toMap(Player::getNumber, Player::getColor));
     }
 }

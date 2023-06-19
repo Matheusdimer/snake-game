@@ -4,7 +4,7 @@ import com.dimer.snake.common.GroundPackage;
 import com.dimer.snake.common.Player;
 import com.dimer.snake.common.Properties;
 
-import java.io.*;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class SnakeClientSenderThread extends Thread {
@@ -32,7 +32,9 @@ public class SnakeClientSenderThread extends Thread {
                         gameController.getGround(),
                         inGame ? player.getMovement() : null,
                         inGame,
-                        inGame ? player.length() : 0);
+                        inGame ? player.length() : 0,
+                        gameController.getPlayersColors()
+                );
 
                 out.writeUnshared(groundPackage);
 

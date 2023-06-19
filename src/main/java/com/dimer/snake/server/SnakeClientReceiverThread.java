@@ -1,11 +1,8 @@
 package com.dimer.snake.server;
 
-import com.dimer.snake.common.GroundPackage;
 import com.dimer.snake.common.Movement;
-import com.dimer.snake.common.Properties;
 
 import java.io.DataInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class SnakeClientReceiverThread extends Thread {
@@ -39,6 +36,7 @@ public class SnakeClientReceiverThread extends Thread {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             gameController.removePlayer(playerName);
             System.out.println("[RECEIVER] " + playerName + " sendo removido.");
         }
