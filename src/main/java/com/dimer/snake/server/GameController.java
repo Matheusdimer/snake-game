@@ -49,14 +49,12 @@ public class GameController extends Thread {
 
             for (Player player : players.values()) {
                 player.move();
-                player.renderToGround(ground);
+                player.render();
 
                 if (player.isDead()) {
-                    removePlayer(player.getName());
-                    player.moveToDeadPlayers(deadPlayersMap);
                     continue;
                 } else if (player.hasHeadClash()) {
-                    Player playerCashed = findPlayerByNumber(player.getOtherPlayerClashed());
+                    Player playerCashed = getPlayer(player.getOtherPlayerClashed());
                     if (playerCashed != null) {
                         decideWhoKill(player, playerCashed);
                     }
@@ -68,7 +66,7 @@ public class GameController extends Thread {
                     hasApple = !ate;
                 }
 
-                player.checkDeadPlayer(deadPlayersMap);
+                player.checkDeadPlayer();
             }
 
             if (hasApple) {
@@ -112,7 +110,7 @@ public class GameController extends Thread {
             killed = player1.kill();
         }
 
-        killed.moveToDeadPlayers(deadPlayersMap);
+        killed.moveToDeadPlayers();
         removePlayer(killed.getName());
     }
 
@@ -150,7 +148,7 @@ public class GameController extends Thread {
         players.remove(playerName);
     }
 
-    private Player findPlayerByNumber(int number) {
+    public Player getPlayer(int number) {
         for (Player player : players.values()) {
             if (player.getNumber() == number) {
                 return player;
@@ -158,5 +156,9 @@ public class GameController extends Thread {
         }
 
         return null;
+    }
+
+    public boolean[][] getDeadPlayersMap() {
+        return deadPlayersMap;
     }
 }

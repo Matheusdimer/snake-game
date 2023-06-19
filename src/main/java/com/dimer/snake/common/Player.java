@@ -1,11 +1,15 @@
 package com.dimer.snake.common;
 
+import com.dimer.snake.server.GameController;
+
 import static com.dimer.snake.common.Properties.GAME_SIZE;
 
 public class Player {
     private final int[] x = new int[GAME_SIZE * GAME_SIZE];
 
     private final int[] y = new int[GAME_SIZE * GAME_SIZE];
+
+    private final GameController controller = GameController.INSTANCE;
 
     private int dots = 3;
 
@@ -85,7 +89,9 @@ public class Player {
         }
     }
 
-    public void renderToGround(int[][] ground) {
+    public void render() {
+        final int[][] ground = controller.getGround();
+
         for (int dotIndex = 0; dotIndex < dots; dotIndex++) {
             int xPos = x[dotIndex], yPos = y[dotIndex];
 
@@ -97,6 +103,15 @@ public class Player {
                     // Indica que a cabeça do player se chocou com a cabeça de outro player
                     this.headClash = true;
                     this.otherPlayerClashed = Math.abs(ground[xPos][yPos]);
+                }
+            } else {
+                int point = Math.abs(ground[xPos][yPos]);
+                // Indica que há outro player se chocando no corpo do player atual
+                if (point >= 10) {
+                    final Player annotherPlayer = controller.getPlayer(point);
+                    if (annotherPlayer != null) {
+                        annotherPlayer.kill();
+                    }
                 }
             }
 
@@ -119,7 +134,9 @@ public class Player {
         return false;
     }
 
-    public void checkDeadPlayer(boolean[][] deadPlayers) {
+    public void checkDeadPlayer() {
+        boolean[][] deadPlayers = controller.getDeadPlayersMap();
+
         int xHead = x[dots - 1];
         int yHead = y[dots - 1];
 
@@ -141,6 +158,10 @@ public class Player {
     public Player kill() {
         System.out.println("[PLAYER] " + name + " morreu.");
         dead = true;
+
+        controller.removePlayer(getName());
+        moveToDeadPlayers();
+
         return this;
     }
 
@@ -164,7 +185,9 @@ public class Player {
         return number;
     }
 
-    public void moveToDeadPlayers(boolean[][] deadPlayersMap) {
+    public void moveToDeadPlayers() {
+        boolean[][] deadPlayersMap = controller.getDeadPlayersMap();
+
         for (int i = 0; i < dots; i++) {
             int xDot = x[i];
             int yDot = y[i];
