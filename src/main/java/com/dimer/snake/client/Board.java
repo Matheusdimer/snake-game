@@ -2,7 +2,6 @@ package com.dimer.snake.client;
 
 import com.dimer.snake.common.GroundPackage;
 import com.dimer.snake.common.Movement;
-import com.dimer.snake.common.Properties;
 import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
@@ -16,12 +15,11 @@ import static com.dimer.snake.common.Properties.*;
 
 public class Board extends JPanel {
 
-    private final int B_WIDTH = 300;
-    private final int B_HEIGHT = 300;
-    private final int DOT_SIZE = B_WIDTH / Properties.GAME_SIZE;
+    private final int B_WIDTH = GAME_SIZE * DOT_SIZE;
+    private final int B_HEIGHT = GAME_SIZE * DOT_SIZE;
 
 
-    private int[][] ground = new int[Properties.GAME_SIZE][Properties.GAME_SIZE];
+    private int[][] ground = new int[GAME_SIZE][GAME_SIZE];
     private boolean inGame = true;
 
     private Image apple;
@@ -88,7 +86,7 @@ public class Board extends JPanel {
 
                 if (dot == APPLE) {
                     g.setColor(null);
-                    g.drawImage(apple, x * DOT_SIZE, y * DOT_SIZE, this);
+                    g.drawImage(apple, x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE, this);
                 } else if (dot == DEAD_PLAYER) {
                     g.setColor(DEAD_PLAYER_COLOR);
                     g.fillOval(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
